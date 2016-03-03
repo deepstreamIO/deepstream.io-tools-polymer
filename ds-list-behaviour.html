@@ -1,0 +1,43 @@
+<script>
+	Polymer.DSListBehaviour = {
+		properties: {
+			name: {
+				type: String
+			},
+			entries: {
+				type: Array,
+				notify: true
+			}
+		},
+		observers: [
+			'_entriesChanged( entries.* )'
+		],
+		created: function() {
+			this._remoteUpdate = false;
+		},
+		ready: function() {
+			this._updateEntries = this._updateEntries.bind( this );
+		},
+		attached: function() {
+			this.list = window.ds.record.getList( this.name );
+			this.list.subscribe( this._updateEntries );
+		},
+		detached: function() {
+			this.list.unsubscribe( this._updateEntries );
+			this.list.discard();
+			this.list = null;
+		},
+		_updateEntries: function( entries ) {
+			this._remoteUpdate = true;
+			this.set( 'entries', entries );
+			this._remoteUpdate = false;
+		},
+		_entriesChanged: function( entries ) {
+			if( !this._remoteUpdate ) {
+				
+			} else {
+				this.fire( 'list-update', entries, { bubbles: false });
+			}
+		}
+	};
+</script>

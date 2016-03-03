@@ -1,0 +1,21 @@
+<!--
+An element wrapper for a deepstream record.
+
+A `<ds-record>` is a utility function to interact with a deepstream record. The element retrieves a record and applies two-way databinding.
+
+Example:
+	<template is="dom-bind" >
+		<ds-list name="polymer_example/users" data="{{users}}" >			
+		</ds-list>
+	</template>
+-->
+<link rel="import" href="ds-list-behaviour.html">
+
+<script>
+	Polymer({
+		is: 'ds-list',
+		behaviors: [
+			Polymer.DSListBehaviour
+		]
+	});
+</script>

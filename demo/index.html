@@ -1,0 +1,58 @@
+<!doctype html>
+
+<html>
+<head>
+	<title>deepstream.io polymer examples</title>
+	<script src="../bower_components/deepstream.io-client-js/dist/deepstream.js"></script>
+	<script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+	<link rel="import" href="../bower_components/polymer/polymer.html">
+	<link rel="import" href="../ds-record.html">
+	<link rel="import" href="../ds-list.html">
+</head>
+<body>
+	<script>
+			window.ds = deepstream( 'localhost:6030' ).login( {} );
+		</script>
+
+		<div>
+			<h3>Record Example</h3>
+			<div>
+					<template is="dom-bind" >
+						<ds-record name="polymer_example/user" data="{{user}}" >
+								<label>Name:</label>
+								<input type="text" value="{{user.name::input}}">
+						</ds-record>
+					</template>
+			</div>
+
+			<div>
+					<template is="dom-bind" >
+						<ds-record name="polymer_example/user2" data="{{user2}}" >
+								<label>Name:</label>
+								<input type="text" value="{{user2.name::input}}">
+						</ds-record>
+					</template>
+			</div>
+		</div>
+
+		<!-- <div>
+			<h3>List Example</h3>
+			<div>
+					<template is="dom-bind" >
+						<ds-list name="polymer_example/users" entries="{{users}}" >
+								<template is="dom-repeat" items="[[users]]" as="username">
+          					<div>
+	          					<span>Record: {{username}}</span>
+	          					<br/>
+											<ds-record name="{{username}}" data="{{user}}" >
+													<label>Name:</label>
+													<input type="text" value="{{user.name::input}}">
+											</ds-record>
+          					</div>
+        				</template>
+						</ds-list>
+					</template>
+			</div>
+		</div> -->
+</body>
+</html>

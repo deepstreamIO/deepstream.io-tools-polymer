@@ -1,0 +1,61 @@
+<script>
+	Polymer.DSRecordBehaviour = {
+		properties: {
+			name: {
+				type: String,
+				notify: true,
+				reflectToAttribute: true
+			},
+			data: {
+				type: Object,
+				notify: true
+			}
+		},
+		observers: [
+				'_dataChanged( data.* )'
+		],
+		created: function() {
+			this._remoteUpdate = false;
+		},
+		ready: function() {
+			this._recordReady = this._recordReady.bind( this );
+			this._updateData = this._updateData.bind( this );
+		},
+		attributeChanged: function( attributeName, oldValue, newValue ) {
+			if( attributeName === 'name' && this.record ) {
+				this.record.setName( newValue );
+			}
+		},
+		attached: function() {
+			this.record = window.ds.record.getAnonymousRecord();
+			this.record.on( 'ready', this._recordReady );
+			this.record.subscribe( this._updateData );
+			if( this.name ) {
+				this.record.setName( this.name );
+			}
+		},
+		detached: function() {
+			this.record.off( 'ready', this._recordReady );
+			this.record.unsubscribe( this._updateData );
+			this.record.discard();
+			this.record = null;
+		},
+		_recordReady: function( record ) {
+			this._updateData( record.get() );
+		},
+		_updateData: function( data ) {
+			this._remoteUpdate = true;
+			this.set( 'data', data );
+			this._remoteUpdate = false;
+		},
+		_dataChanged: function( data ) {
+			if( this.record ) {
+				if( !this._remoteUpdate ) {
+					this.record.set( data.path.replace( 'data.', '' ), data.value );
+				} else {
+					this.fire( 'record-update', data, { bubbles: false });
+				}
+			}
+		}
+	};
+</script>
