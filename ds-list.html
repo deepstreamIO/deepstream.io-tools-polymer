@@ -1,13 +1,18 @@
 <!--
-An element wrapper for a deepstream record.
+An element wrapper for a deepstream list.
 
-A `<ds-record>` is a utility function to interact with a deepstream record. The element retrieves a record and applies two-way databinding.
+A `<ds-list>` is a utility function to load a ds-list and allow you to easily loop over its entries. If you want to create your own with custom behaviour just extend DSListBehaviour.
 
 Example:
-	<template is="dom-bind" >
-		<ds-list name="polymer_example/users" data="{{users}}" >			
-		</ds-list>
-	</template>
+	<ds-list name="[[name]]" entries="{{todos}}" >
+		<ul>
+			<template is="dom-repeat" items="[[todos]]" as="recordId">
+				<li>
+					<span>[[recordId]]</span>
+				</li>
+			</template>
+		</ul>
+	</ds-list>
 -->
 <link rel="import" href="ds-list-behaviour.html">
 

@@ -1,0 +1,36 @@
+<link rel="import" href="../ds-record.html">
+
+<dom-module id="todo-record">
+	<template>
+		<ds-record name="[[name]]" data="{{todo}}" >
+			<input type="text" value="{{todo.name::input}}">
+			<span class$="fa fa-fw [[checkedClass]]" on-click="checkHandler">
+		</ds-record>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'todo-record',
+			properties : {
+				name: String,
+				checkedClass: {
+					type: String,
+					computed: '_checkType( data )'
+				}
+			},
+			behaviors: [
+				Polymer.DSRecordBehaviour
+			],
+			checkHandler: function() {
+				this.set( 'data.checked', !this.data.checked );
+			},
+			_checkType: function() {
+				if( this.data.checked ) {
+					return 'fa-check-square-o';
+				} else {
+					return 'fa-square-o';
+				}
+			}
+		});
+	</script>
+</dom-module>

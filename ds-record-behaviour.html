@@ -1,4 +1,19 @@
+<link rel="import" href="deepstream.html">
+
 <script>
+    /**
+     * `Polymer.DSRecordBehaviour` provides two-way bindings to automatically update 
+     * the record when changed by the user and update the view when notified by the server. 
+	 *
+     * For convienience you can also change the name attribute which would swap out the
+     * record your bound too.
+     * 
+     * The element required a name property to indicate which record to subsrcribe to, 
+     * and a data attribute to apply two-way bindings to.
+     *
+     * @demo demo/index.html
+     * @polymerBehavior
+     */
 	Polymer.DSRecordBehaviour = {
 		properties: {
 			name: {
@@ -12,28 +27,37 @@
 			}
 		},
 		observers: [
-				'_dataChanged( data.* )'
+			'_dataChanged( data.* )'
 		],
-		created: function() {
-			this._remoteUpdate = false;
-		},
 		ready: function() {
+			this._remoteUpdate = false;
 			this._recordReady = this._recordReady.bind( this );
 			this._updateData = this._updateData.bind( this );
 		},
+		/**
+		* Update the record name whenever the attribute changes. This is made
+		* easy by using the Anonymous record
+		*/
 		attributeChanged: function( attributeName, oldValue, newValue ) {
 			if( attributeName === 'name' && this.record ) {
 				this.record.setName( newValue );
 			}
 		},
+		/*
+		* Create the record on attach. This optimises records by only
+		* using them when the element in actually in the dom.
+		*/
 		attached: function() {
-			this.record = window.ds.record.getAnonymousRecord();
+			this.record = ds.record.getAnonymousRecord();
 			this.record.on( 'ready', this._recordReady );
 			this.record.subscribe( this._updateData );
 			if( this.name ) {
 				this.record.setName( this.name );
 			}
 		},
+		/*
+		* Discard the record on detach.
+		*/
 		detached: function() {
 			this.record.off( 'ready', this._recordReady );
 			this.record.unsubscribe( this._updateData );

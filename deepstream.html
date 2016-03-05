@@ -1,0 +1,11 @@
+<script src="bower_components/deepstream.io-client-js/dist/deepstream.js"></script>
+
+<script>
+	window.ds = deepstream( 'localhost:6020' ).login( {}, function( success ) {
+		if( success ) {
+			console.log( 'Logged in' );
+		} else {
+			console.log( 'Log in failed' );
+		}
+	} );
+</script>
