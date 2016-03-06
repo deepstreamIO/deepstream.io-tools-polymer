@@ -1,6 +1,6 @@
 # deepstream.io-tools-polymer
 
-Polymer elements the makes it easy to sync with deepstream.
+Polymer elements that makes it easy to sync with deepstream.
 
 ## Elements
 
