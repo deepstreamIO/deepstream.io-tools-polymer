@@ -1,0 +1,97 @@
+<link rel="import" href="deepstream.html">
+
+<script>
+    /**
+     * @polymerBehavior
+     */
+	Polymer.DSLoginBehaviour = {
+		properties: {
+			/**
+			* The deepstream url
+			*/
+			url: {
+				type: String
+			},
+			/**
+			* Auth parameters to use if autoLogin is false
+			*/
+			authParams: {
+				type: Object,
+				value: {}
+			},
+			/**
+			* Used to login without creds ( anonymous )
+			*/
+			autoLogin: {
+				type: Boolean, 
+				value: false
+			},
+			/**
+			* Connection values that can only be read from 
+			* the connection. This includes loggedIn if user
+			* is logged in, and state to reflect the 
+			* deepstream state
+			*/
+			connection: {
+				type: Object,						
+				readOnly: true,
+				value: {
+					loggedIn: false,
+					state: 'BOB'
+				}
+			}
+		},
+		/**
+		* Throws an error if this component is created 
+		* without a deepstream to connect to
+		*/
+		ready: function() {
+			if( !this.url ) {
+				throw Error( 'Can\'t connect to deepstream without a url' );
+			}
+			window.ds = deepstream( this.url ); 
+			ds.on( 'connectionStateChanged', this._connectionStateChanged.bind( this ) );
+		},
+		/*
+		* If autologin or authparams exist then login 
+		* when attached
+		*/
+		attached: function() {
+			if( this.autoLogin || this._hasAuthParams() ) {
+				this.login();
+			}
+		},
+		/*
+		* Close connection when detached. 
+		* This doesn't clean up connection entirely to 
+		* allow quick resuming when required.
+		*/
+		detached: function() {
+			ds.close();
+		},
+		/**
+		* Method to call if autoLogin is disabled
+		*/
+		login: function() {
+			ds.login( 
+				this.authParams, 
+				this._loginCallback.bind( this ) 
+			);
+		},
+		_loginCallback: function( success ) {
+			if( success ) {
+				this.fire( 'logged-in' );	
+			} else {
+				this.fire( 'login-error' );
+			}
+			this.set( 'connection.loggedIn', success );
+		},
+		_connectionStateChanged: function( connectionState ) {
+			this.set( 'connection.state', connectionState );
+		},
+		_hasAuthParams: function() {
+			var authParams = this.authParams;
+			return authParams && Object.keys( authParams ).length > 0;
+		}
+	};
+</script>

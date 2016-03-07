@@ -13,11 +13,17 @@ Example:
 -->
 <link rel="import" href="ds-record-behaviour.html">
 
-<script>
-	Polymer({
-		is: 'ds-record',
-		behaviors: [
-			Polymer.DSRecordBehaviour
-		]
-	});
-</script>
+<dom-module id="todo-record">
+	<script>
+	(function () {
+    	'use strict';
+		
+		Polymer({
+			is: 'ds-record',
+			behaviors: [
+				Polymer.DSRecordBehaviour
+			]
+		});
+	})();
+	</script>
+</dom-module>

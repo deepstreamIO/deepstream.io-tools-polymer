@@ -1,0 +1,47 @@
+<html>
+<head>
+	<title>ds-record</title>
+
+	<script src="../bower_components/webcomponentsjs/webcomponents.js"></script>
+	<script src="../bower_components/web-component-tester/browser.js"></script>
+	<script src="../bower_components/test-fixture/test-fixture-mocha.js"></script>
+
+	<link rel="import" href="../bower_components/polymer/polymer.html">
+	<link rel="import" href="../bower_components/test-fixture/test-fixture.html">
+	<link rel="import" href="../ds-record.html">
+</head>
+<body>
+
+	<test-fixture id="read-only">
+		<template>
+			<ds-record name="test-record"></ds-record>
+		</template>
+	</test-fixture>
+
+	<script>
+		var element;
+
+		suite( '<ds-record>', function() {
+
+			suite( 'basic usage', function() {
+				setup(function() {
+					element = fixture( 'read-only' );
+				});
+
+				teardown(function() {
+				});
+
+				test('receives data from Firebase location', function(done) {
+					waitForEvent(firebase, 'data-changed').then(function() {
+						expect(firebase.data.passed).to.be.equal(true);
+						done();
+					}).catch(function() {
+						done(e);
+					});
+				});
+			});
+		});
+	</script>
+
+</body>
+</html>
