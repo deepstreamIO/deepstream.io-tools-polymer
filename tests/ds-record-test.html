@@ -31,13 +31,7 @@
 				teardown(function() {
 				});
 
-				test('receives data from Firebase location', function(done) {
-					waitForEvent(firebase, 'data-changed').then(function() {
-						expect(firebase.data.passed).to.be.equal(true);
-						done();
-					}).catch(function() {
-						done(e);
-					});
+				test('receives data from deepstream location', function(done) {
 				});
 			});
 		});
