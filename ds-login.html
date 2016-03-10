@@ -4,13 +4,12 @@ An element wrapper to allow deepstream logins
 A `<ds-login>` can be used to login against the deepstream server, as well as provide connection state.
 
 Example:
-	<template is="dom-bind" >
+
 		<ds-login auth-params="{{authParams}}" logged-in={{loggedIn}}>
 			<input value={{username::changed}}/>
 			<input value={{password::changed}}/>
 			<button onclick={{login}}>Login</button>
-		</ds-login>	
-	</template>
+		</ds-login>			
 -->
 <link rel="import" href="ds-login-behaviour.html">
 
