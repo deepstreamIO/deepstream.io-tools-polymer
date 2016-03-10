@@ -8,33 +8,93 @@
 
 	<link rel="import" href="../bower_components/polymer/polymer.html">
 	<link rel="import" href="../bower_components/test-fixture/test-fixture.html">
+	<link rel="import" href="../ds-login.html">
 	<link rel="import" href="../ds-record.html">
 </head>
 <body>
 
-	<test-fixture id="read-only">
+	<test-fixture id="WithoutName">
 		<template>
-			<ds-record name="test-record"></ds-record>
+			<ds-record 
+				data="{{data}}">
+			</ds-record>
+		</template>
+	</test-fixture>
+
+	<test-fixture id="Normal">
+		<template>
+			<ds-record 
+				name="polymer-tests/ds-record" 
+				data="{{data}}">
+				<span id="read">[[data.read]]</span>
+				<input id="write" value="{{data.write::input}}"/>
+			</ds-record>
 		</template>
 	</test-fixture>
 
 	<script>
-		var element;
+	window.ds = deepstream( 'localhost:6020' );
 
-		suite( '<ds-record>', function() {
+	describe( '<ds-record>', function() {
+		var withoutName, withoutNameElement;
+		var normal, normalElement;
 
-			suite( 'basic usage', function() {
-				setup(function() {
-					element = fixture( 'read-only' );
-				});
+		beforeEach(function() {
+			ds.login( {}, function() {} );
+			withoutName = document.getElementById( 'WithoutName' );
+    		normal = document.getElementById( 'Normal' );
 
-				teardown(function() {
-				});
-
-				test('receives data from deepstream location', function(done) {
-				});
-			});
+    		withoutNameElement = withoutName.create();
+    		normalElement = normal.create();
 		});
+
+		afterEach(function() {
+			withoutName.restore();
+    		normal.restore();
+		});
+		
+		// it( 'throws an error when not provided a name', function() {
+		// 	var write = withoutNameElement.getElementById( 'write' );
+		// 	write.value = 'This was written via the dom';
+		// 	write.dispatchEvent( new Event( 'input' ) );
+		// } );
+
+		it( 'updates dom when record changes', function( done ) {
+			ds
+			.record
+				.getRecord( 'polymer-tests/ds-record')
+				.set( { read: 'A New Read Only Value' } );
+
+			window.setTimeout( function() {
+				assert.equal(
+					normalElement.getElementById( 'read' ).textContent,
+					'A New Read Only Value',
+					'One way binding not correctly working'
+				);
+				done();
+			}, 250 );
+		} );
+
+		it( 'updates record when data changes', function( done ) {
+			var write = normalElement.getElementById( 'write' );
+			write.value = 'This was written via the dom';
+			write.dispatchEvent( new Event( 'input' ) );
+
+			window.setTimeout( function() {
+				ds
+					.record
+					.getRecord( 'polymer-tests/ds-record')
+					.whenReady( function( record ) {
+						assert.equal(
+							record.get( 'write' ),
+							'This was written via the dom',
+							'Two way binding not correctly working'
+						)
+					} );
+				done();
+			}, 250 );
+		} );
+	});
 	</script>
 
 </body>

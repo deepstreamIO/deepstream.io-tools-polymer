@@ -6,7 +6,6 @@ A `<ds-record>` is a utility function to interact with a deepstream record. The 
 Example:
 	<template is="dom-bind" >
 		<ds-record name="polymer_example/user" data="{{user}}" >
-			<label>Name</label>
 			<input type="text" value="{{user.name::input}}">
 		</ds-record>
 	</template>
@@ -16,7 +15,7 @@ Example:
 <dom-module id="todo-record">
 	<script>
 	(function () {
-    	'use strict';
+		'use strict';
 		
 		Polymer({
 			is: 'ds-record',

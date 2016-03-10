@@ -5,10 +5,10 @@ A `<ds-login>` can be used to login against the deepstream server, as well as pr
 
 Example:
 	<template is="dom-bind" >
-		<ds-login url="https://localhost:6020" auth-params="{{authParams}}"  >
+		<ds-login auth-params="{{authParams}}" logged-in={{loggedIn}}>
 			<input value={{username::changed}}/>
 			<input value={{password::changed}}/>
-			<button onclick={{login}}></button>
+			<button onclick={{login}}>Login</button>
 		</ds-login>	
 	</template>
 -->

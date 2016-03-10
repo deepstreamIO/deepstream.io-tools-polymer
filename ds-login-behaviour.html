@@ -1,97 +1,89 @@
 <link rel="import" href="deepstream.html">
 
 <script>
-    /**
-     * @polymerBehavior
-     */
-	Polymer.DSLoginBehaviour = {
-		properties: {
-			/**
-			* The deepstream url
-			*/
-			url: {
-				type: String
-			},
-			/**
-			* Auth parameters to use if autoLogin is false
-			*/
-			authParams: {
-				type: Object,
-				value: {}
-			},
-			/**
-			* Used to login without creds ( anonymous )
-			*/
-			autoLogin: {
-				type: Boolean, 
-				value: false
-			},
-			/**
-			* Connection values that can only be read from 
-			* the connection. This includes loggedIn if user
-			* is logged in, and state to reflect the 
-			* deepstream state
-			*/
-			connection: {
-				type: Object,						
-				readOnly: true,
-				value: {
-					loggedIn: false,
-					state: 'BOB'
-				}
-			}
+ /**
+ * `Polymer.DSLoginBehaviour` provides functionality for user logins. Extend this behaviour for custom login form elements.
+ *
+ * @polymerBehavior
+ */
+Polymer.DSLoginBehaviour = {
+	properties: {
+		/**
+		* Auth parameters to use if autoLogin is false
+		*/
+		authParams: {
+			type: Object,
+			value: {}
 		},
 		/**
-		* Throws an error if this component is created 
-		* without a deepstream to connect to
+		* Used to login without creds ( anonymous )
 		*/
-		ready: function() {
-			if( !this.url ) {
-				throw Error( 'Can\'t connect to deepstream without a url' );
-			}
-			window.ds = deepstream( this.url ); 
-			ds.on( 'connectionStateChanged', this._connectionStateChanged.bind( this ) );
-		},
-		/*
-		* If autologin or authparams exist then login 
-		* when attached
-		*/
-		attached: function() {
-			if( this.autoLogin || this._hasAuthParams() ) {
-				this.login();
-			}
-		},
-		/*
-		* Close connection when detached. 
-		* This doesn't clean up connection entirely to 
-		* allow quick resuming when required.
-		*/
-		detached: function() {
-			ds.close();
+		autoLogin: {
+			type: Boolean, 
+			value: false
 		},
 		/**
-		* Method to call if autoLogin is disabled
+		* Whether or not the user is logged in. This uses a number
+		* since boolean values work via attribute presence and don't 
+		* comply so well with dom-if blocks
 		*/
-		login: function() {
-			ds.login( 
-				this.authParams, 
-				this._loginCallback.bind( this ) 
-			);
+		loggedIn: {
+			type: Number,
+			value: 0
 		},
-		_loginCallback: function( success ) {
-			if( success ) {
-				this.fire( 'logged-in' );	
-			} else {
-				this.fire( 'login-error' );
-			}
-			this.set( 'connection.loggedIn', success );
-		},
-		_connectionStateChanged: function( connectionState ) {
-			this.set( 'connection.state', connectionState );
-		},
-		_hasAuthParams: function() {
-			var authParams = this.authParams;
-			return authParams && Object.keys( authParams ).length > 0;
+		/**
+		* The deepstream connection to connect to. If this is left
+		* empty the component will try use a global ds instance if 
+		* available
+		* @type {Deepstream}
+		*/
+		ds: {
+			type: Object
 		}
-	};
+	},
+	/*
+	* If autologin or authparams exist then login 
+	* when attached
+	*/
+	attached: function() {
+		if( !this.ds && window.ds ) {
+			if( window.ds ) {
+				this.set( 'ds', ds );	
+			} else {
+				throw new Error( 'Missing ds instance' ); 	
+			}
+		}
+
+		if( this.autoLogin || this._hasAuthParams() ) {
+			this.login();
+		}
+	},
+	/*
+	* TODO: What do we do here? Close connection seems intense.
+	*/
+	detached: function() {
+	},
+	/**
+	* Call if autoLogin is disabled after you populate your 
+	* authentication parameters
+	*/
+	login: function() {
+		this.ds.login( 
+			this.authParams, 
+			this._loginCallback.bind( this ) 
+		);
+	},
+	_loginCallback: function( success ) {
+		if( success ) {
+			this.fire( 'logged-in' );	
+		} else {
+			this.fire( 'login-error' );
+		}
+		this.set( 'loggedIn', success ? 1 : 0 );
+	},
+	_hasAuthParams: function() {
+		var authParams = this.authParams;
+		return authParams && Object.keys( authParams ).length > 0;
+	}
+};
 </script>
