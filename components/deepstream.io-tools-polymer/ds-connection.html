@@ -1,0 +1,22 @@
+<!--
+An element wrapper to allow deepstream logins
+
+A `<ds-connection>` element can be used to establish a connection to a deepstream server, as well as expose connection state.
+
+Example:
+
+		<ds-connection url="localhost:6020" state="{{state}}" ds="{{ds}}">
+		</ds-connection>	
+
+-->
+<link rel="import" href="ds-connection-behaviour.html">
+
+<script>
+	'use-strict';
+	Polymer({
+		is: 'ds-connection',
+		behaviors: [
+			Polymer.DSConnectionBehaviour
+		]
+	});
+</script>

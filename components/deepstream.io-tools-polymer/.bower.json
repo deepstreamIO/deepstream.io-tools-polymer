@@ -1,0 +1,34 @@
+{
+  "name": "deepstream.io-tools-polymer",
+  "description": "some deepstream elements that play nice with polymer",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "deepstream.io",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.3.1",
+    "deepstream.io-client-js": "latest"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.1.4",
+    "web-component-tester": "^4.2.2"
+  },
+  "_release": "caf80e2a12",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "caf80e2a12378d280091c5c1e592ffb5c211e613"
+  },
+  "_source": "git://github.com/deepstreamIO/deepstream.io-tools-polymer.git",
+  "_target": "master",
+  "_originalSource": "deepstreamIO/deepstream.io-tools-polymer",
+  "_direct": true
+}

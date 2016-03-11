@@ -1,0 +1,113 @@
+<link rel="import" href="deepstream.html">
+
+<script>
+/**
+ * `Polymer.DSListBehaviour` allows you to easily load entries from 
+ * a list and loop over them.
+ *
+ * For convienience you can also change the name attribute which 
+ * would swap out the list your bound too.
+ *
+ * @polymerBehavior
+ */
+Polymer.DSListBehaviour = {
+	properties: {
+		/**
+		* The name of list to use, this can be changed during runtime
+		*/
+		name: {
+			type: String,
+			notify: true,
+			reflectToAttribute: true
+		},
+		/**
+		* The entries within a list. This is a one-way binding and 
+		* the addEntry / removeEntry methods should be used to modify
+		* the list
+		*/
+		entries: {
+			type: Array,
+			notify: true
+		},
+		/**
+		* The deepstream connection to connect to. If this is left
+		* empty the component will try use a global ds instance if 
+		* available
+		* @type {Deepstream}
+		*/
+		ds: {
+			type: Object
+		}
+	},
+	observers: [
+		'_entriesChanged( entries.* )'
+	],
+	/**
+	*	Use to add entries to the end of the list
+	*	@param {string} entry
+	*/
+	addEntry: function( entry ) {
+		if( this.list ) {
+			this.list.addEntry( entry );
+		}
+	},
+	/**
+	*	Use to remove entries
+	*	@param {string} entry
+	*/
+	removeEntry: function( entry ) {
+		if( this.list ) {
+			this.list.removeEntry( entry );
+		}
+	},
+	ready: function() {
+		if( !this.ds && window.ds ) {
+			if( window.ds ) {
+				this.set( 'ds', ds );	
+			} else {
+				throw new Error( 'Missing ds instance' ); 	
+			}
+		}
+
+		this._remoteUpdate = false;
+		this._updateEntries = this._updateEntries.bind( this );
+	},
+	/*
+	* Request the list on attach.
+	*/
+	attached: function() {
+		this.list = this.ds.record.getList( this.name );
+		this.list.subscribe( this._updateEntries );
+		this.list.whenReady( this._updateEntries.bind( this ) );
+	},
+	/*
+	* Discard the list on detach.
+	*/
+	detached: function() {
+		this.list.unsubscribe( this._updateEntries );
+		this.list.discard();
+		this.list = null;
+	},
+	/**
+	* Update the list name whenever the attribute changes.
+	*/
+	attributeChanged: function( attributeName, oldValue, newValue ) {
+		if( attributeName === 'name' && this.list ) {
+			Polymer.DSListBehaviour.detached.apply( this );
+			Polymer.DSListBehaviour.attached.apply( this );
+		}
+	},
+	_updateEntries: function( entries ) {
+		entries = entries.getEntries ? entries.getEntries() : entries;
+
+		this._remoteUpdate = true;
+		this.set( 'entries', entries );
+		this._remoteUpdate = false;
+	},
+	_entriesChanged: function( entries ) {
+		if( this._remoteUpdate ) {
+			this.fire( 'list-updated', entries, { bubbles: false });
+		}
+	}
+};
+</script>

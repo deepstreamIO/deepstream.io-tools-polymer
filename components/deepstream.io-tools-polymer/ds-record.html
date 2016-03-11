@@ -1,0 +1,27 @@
+<!--
+An element wrapper for a deepstream record that extends DSRecordBehaviour.
+
+A `<ds-record>` is a utility function to interact with a deepstream record. The element retrieves a record and applies two-way databinding.
+
+Example:
+
+		<ds-record name="polymer_example/user" data="{{user}}" ds="[[ds]]">
+			<input type="text" value="{{user.name::input}}">
+		</ds-record>
+-->
+<link rel="import" href="ds-record-behaviour.html">
+
+<dom-module id="todo-record">
+	<script>
+	(function () {
+		'use strict';
+		
+		Polymer({
+			is: 'ds-record',
+			behaviors: [
+				Polymer.DSRecordBehaviour
+			]
+		});
+	})();
+	</script>
+</dom-module>

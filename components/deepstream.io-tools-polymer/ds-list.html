@@ -1,0 +1,28 @@
+<!--
+An element wrapper for a deepstream list.
+
+A `<ds-list>` is a utility function to load a ds-list and allow you to easily loop over its entries. If you want to create your own with custom behaviour just extend DSListBehaviour.
+
+Example:
+
+		<ds-list name="[[name]]" entries="{{todos}}" ds="[[ds]]" >
+			<ul>
+				<template is="dom-repeat" items="[[todos]]" as="recordId">
+					<li>
+						<span>[[recordId]]</span>
+					</li>
+				</template>
+			</ul>
+		</ds-list>
+
+-->
+<link rel="import" href="ds-list-behaviour.html">
+
+<script>
+	Polymer({
+		is: 'ds-list',
+		behaviors: [
+			Polymer.DSListBehaviour
+		]
+	});
+</script>

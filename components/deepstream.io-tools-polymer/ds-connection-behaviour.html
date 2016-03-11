@@ -1,0 +1,79 @@
+<link rel="import" href="deepstream.html">
+
+<script>
+(function() {
+	var count = 0;
+	var ds = null;
+
+	 /**
+	 * `Polymer.DSConnectionBehaviour` allows you to establish a deepstream 
+	 *  connection and exposes the connection and state
+	 *
+	 * @polymerBehavior
+	 */
+	Polymer.DSConnectionBehaviour = {
+		properties: {
+			/**
+			* The deepstream url
+			*/
+			url: {
+				type: String
+			},
+			/**
+			* State to reflect the connection deepstream state
+			*/
+			state: {
+				type: String
+			},
+			/**
+			* The deepstream connection to connect to. If this is left
+			* empty the component will try use a global ds instance if 
+			* available
+			* @type Deepstream
+			*/
+			ds: {
+				type: Object,
+				notify: true,
+				reflectToAttribute: true,
+				value: null
+			}
+		},
+		ready: function() {
+			this._stateChanged = this._stateChanged.bind( this );
+		},
+		/**
+		* Throws an error if this component is created 
+		* without a deepstream to connect to
+		*/
+		attached: function() {
+			if( !ds ) {
+				if( !this.url ) {
+					throw Error( 'top-level ds-connection must include url' );
+				}
+				ds = deepstream( this.url );
+			}
+			this.set( 'ds', ds );
+			count++;
+			ds.on( 'connectionStateChanged', this._stateChanged );
+		},
+		/*
+		* Close connection when detached. 
+		* This doesn't clean up connection entirely to 
+		* allow quick resuming when required.
+		*/
+		detached: function() {
+			this.ds.off( 'connectionStateChanged', this._stateChanged );
+
+			count--;
+			if( count === 0 ) {
+				this.ds.close();
+				this.ds = null;
+				ds = null;
+			}
+		},
+		_stateChanged: function( connectionState ) {
+			this.set( 'state', connectionState );
+		}
+	};
+})();
+</script>

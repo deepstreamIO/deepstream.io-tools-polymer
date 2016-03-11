@@ -1,0 +1,103 @@
+<script>
+/**
+ * `Polymer.DSRecordBehaviour` provides two-way bindings to automatically update 
+ * the record when changed by the user and update the view when notified by the server. 
+ *
+ * For convienience you can also change the name attribute which would swap out the
+ * record your bound to.
+ *
+ * @polymerBehavior
+ */
+Polymer.DSRecordBehaviour = {
+	properties: {
+		/**
+		* The name of the record to subscribe to, this can be changed * during runtime to switch the underlying record
+		*/
+		name: {
+			type: String,
+			notify: true,
+			reflectToAttribute: true
+		},
+		/**
+		* The record data, this is used for one/two way bindings which
+		* will automatically sync with all other clients
+		*/
+		data: {
+			type: Object,
+			notify: true
+		},
+		/**
+		* The deepstream connection to connect to. If this is left
+		* empty the component will try use a global ds instance if 
+		* available
+		* @type {Deepstream}
+		*/
+		ds: {
+			type: Object
+		}
+	},
+	observers: [
+		'_dataChanged( data.* )'
+	],
+	ready: function() {
+		if( !this.ds && window.ds ) {
+			if( window.ds ) {
+				this.set( 'ds', ds );	
+			} else {
+				throw new Error( 'Missing ds instance' ); 	
+			}
+		}
+
+		this._remoteUpdate = false;
+		this._recordReady = this._recordReady.bind( this );
+		this._updateData = this._updateData.bind( this );
+	},
+	/**
+	* Update the record name whenever the attribute changes. This is made
+	* easy by using the Anonymous record
+	*/
+	attributeChanged: function( attributeName, oldValue, newValue ) {
+		if( attributeName === 'name' && this.record ) {
+			this.record.setName( newValue );
+		}
+	},
+	/*
+	* Create the record on attach. This optimises records by only
+	* using them when the element in actually in the dom.
+	*/
+	attached: function() {
+		this.record = this.ds.record.getAnonymousRecord();
+		this.record.on( 'ready', this._recordReady );
+		this.record.subscribe( this._updateData );
+		if( this.name ) {
+			this.record.setName( this.name );
+		}
+	},
+	/*
+	* Discard the record on detach.
+	*/
+	detached: function() {
+		this.record.off( 'ready', this._recordReady );
+		this.record.unsubscribe( this._updateData );
+		this.record.discard();
+		this.record = null;
+	},
+	_recordReady: function( record ) {
+		this._updateData( record.get() );
+	},
+	_updateData: function( data ) {
+		this._remoteUpdate = true;
+		this.set( 'data', data );
+		this._remoteUpdate = false;
+	},
+	_dataChanged: function( data ) {
+		if( this.record ) {
+			if( !this._remoteUpdate ) {
+				this.record.set( data.path.replace( 'data.', '' ), data.value );
+			} else {
+				this.fire( 'record-update', data, { bubbles: false });
+			}
+		}
+	}
+};
+</script>
