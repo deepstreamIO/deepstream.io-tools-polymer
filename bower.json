@@ -3,6 +3,7 @@
   "description": "some deepstream elements that play nice with polymer",
   "main": "",
   "moduleType": [],
+  "author": "deepstreamHub GmbH",
   "license": "MIT",
   "homepage": "deepstream.io",
   "private": true,
@@ -15,7 +16,7 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.3.1",
-    "deepstream.io-client-js": "latest"
+    "deepstream.io-client-js": "^1.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.1.4",
